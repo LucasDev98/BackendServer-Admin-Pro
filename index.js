@@ -17,8 +17,18 @@ app.use( express.json() );
 dbConection();
 
 //Rutas
+//Users
 app.use( '/api/usuarios', require('./routes/users') );
+//Login
 app.use( '/api/login', require('./routes/auth') );
+//Hospitals
+app.use( '/api/hospitals', require('./routes/hospitals') );
+//Medicals
+app.use( '/api/medicals', require('./routes/medicals') );
+//Searches
+app.use( '/api/search', require('./routes/searches') );
+//Uploads
+app.use( '/api/uploads', require('./routes/uploads') );
 
 
 

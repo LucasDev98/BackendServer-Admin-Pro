@@ -5,13 +5,21 @@ const { JSONWebTokenGenerator } = require('../helpers/jwt');
 
 
 const getUsers = async ( req, res ) => {
-
-    const users = await User.find({}, 'name lastName email role google')
+    const from = Number( req.query.from ) || 0;
+    
+     
+    const [ users, total ] = await Promise.all( [
+        User.find({}, 'name lastName email role google')
+                            .skip(from)
+                            .limit(10),
+        User.count()
+    ])
 
     res.json({
         ok : true,
         users,
-        uid : req.uid
+        uid : req.uid,
+        total
     })
 }
 
