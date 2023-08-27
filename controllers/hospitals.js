@@ -1,89 +1,104 @@
-const Hospital = require('../models/hospital');
-const { response } = require('express');
+const hospital = require("../models/hospital");
+const Hospital = require("../models/hospital");
+const { response } = require("express");
 
+const getHospitals = async (req, res = response) => {
+  const hospitals = await Hospital.find().populate("user", "name img");
 
+  try {
+    res.json({
+      ok: true,
+      msg: "Get Hospital",
+      hospitals,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      error: "Algo salio mal",
+    });
+  }
+};
 
+const createHospital = async (req, res = response) => {
+  const uid = req.uid;
 
+  const hospital = new Hospital({ user: uid, ...req.body });
+  try {
+    const hospitalDB = await hospital.save();
+    res.json({
+      ok: true,
+      hospital: hospitalDB,
+      msg: "Create Hospital",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error en la peticion",
+    });
+  }
+};
 
-const getHospitals = async ( req, res = response ) => {
+const updateHospital = async (req, res = response) => {
+  const id = req.params.id;
+  const uid = req.uid;
 
-    const hospitals = await Hospital.find()
-                                            .populate('user', 'name img')
+  try {
+    const hospitalDB = await Hospital.findById({ _id: id });
 
-    try {
-
-        res.json({
-            ok : true,
-            msg : "Get Hospital",
-            hospitals
-        })
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok : false,
-            error : "Algo salio mal"
-        })
+    if (!hospitalDB) {
+      res.status(404).json({
+        ok: false,
+        msg: "Invalid Id",
+      });
     }
-}
+    const dataHospital = {
+      ...req.body,
+      user: uid,
+    };
 
+    const UpdateHospital = await Hospital.findByIdAndUpdate(id, dataHospital, {
+      new: true,
+    });
 
+    res.json({
+      ok: true,
+      hospital: UpdateHospital,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const createHospital  = async (req , res = response ) => {
+const deleteHospital = async (req, res = response) => {
+  const uid = req.uid;
+  const id = req.params.id;
 
-    const uid = req.uid; 
- 
-    const hospital = new Hospital(
-            { user : uid,
-             ...req.body });
-    try {
+  try {
+    const HospitalDB = await Hospital.findById({ _id: id });
 
-        const hospitalDB = await hospital.save();
-        res.json({
-            ok : true,
-            hospital : hospitalDB,
-            msg : "Create Hospital"
-            
-        })
-        
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({
-            ok : false,
-            msg : "Error en la peticion"
-        })
+    if (!HospitalDB) {
+      res.status(404).json({
+        ok: false,
+        msg: "Invalid id",
+      });
     }
-}
 
-const updateHospital  = (req , res = response ) => {
-    
-    try {
-        res.json({
-            ok : true,
-            msg : "Update Hospital"
-        })
-    } catch (error) {
-        
-    }
-}
+    await Hospital.findByIdAndDelete(id);
 
-const deleteHospital  = (req , res = response ) => {
-    
-    try {
-        res.json({
-            ok : true,
-            msg : "Delete Hospital"
-        })
-        
-    } catch (error) {
-        
-    }
-}
-
+    res.json({
+      ok: true,
+      msg: "Delete Hospital",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
-    getHospitals,
-    createHospital,
-    updateHospital,
-    deleteHospital
-}
+  getHospitals,
+  createHospital,
+  updateHospital,
+  deleteHospital,
+};
