@@ -2,4 +2,19 @@
 
 
 # Ignorar carpeta node_modules
-node_modules
+node_modules/
+
+uploads/hospitals/**.jpg
+uploads/hospitals/**.png
+uploads/hospitals/**.gif
+
+
+
+uploads/users/**.jpg
+uploads/users/**.png
+uploads/users/**.gif
+
+
+uploads/medicals/**.jpg
+uploads/medicals/**.png
+uploads/medicals/**.gif

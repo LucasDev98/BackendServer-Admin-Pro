@@ -8,15 +8,22 @@ const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
 const { valdidarToken } = require("../middlewares/validarJWT");
 const {
-  getMedical,
   createMedical,
   updateMedical,
   deleteMedical,
+  getMedicals,
+  getMedical,
 } = require("../controllers/medicals");
 
 const router = Router();
 
-router.get("/", [], getMedical);
+router.get("/", [], getMedicals);
+
+router.get(
+  "/:id",
+  [valdidarToken, check("token", "Token is required").isEmpty()],
+  getMedical
+);
 
 router.post(
   "/",

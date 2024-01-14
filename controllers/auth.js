@@ -43,6 +43,7 @@ const login = async (req, res = response) => {
 };
 
 const googleSingIn = async (req, res = response) => {
+  console.log(req.body);
   try {
     const googleUser = await googleVerify(req.body.token);
 
@@ -87,10 +88,12 @@ const renewToken = async (req, res = response) => {
   const uid = req.uid;
   console.log(uid);
   try {
+    const userDB = await User.findById(uid);
     const token = await JSONWebTokenGenerator(uid);
     return res.json({
       ok: true,
       token: token,
+      user: userDB,
     });
   } catch (error) {
     console.log(error);

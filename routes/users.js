@@ -1,51 +1,58 @@
 /* 
     PATH : /api/usuarios
 */
-const { Router } = require('express');
-const { validarCampos } = require('../middlewares/validarCampos');
-const { valdidarToken } = require('../middlewares/validarJWT');
-const { check } = require('express-validator');
-const { getUsers, createUser, updateUser, deleteUser } = require('../controllers/users');
-
+const { Router } = require("express");
+const { validarCampos } = require("../middlewares/validarCampos");
+const { valdidarToken } = require("../middlewares/validarJWT");
+const { check } = require("express-validator");
+const {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require("../controllers/users");
 
 const router = Router();
 
-
 // Get Users
-router.get( '/', valdidarToken, getUsers );
+router.get("/", valdidarToken, getUsers);
 // Create User
-router.post( '/',
-    [
-        check('name', "name is required").not().isEmpty(),
-        check('lastName', "last name is required").not().isEmpty(),
-        check('email', "email is invalid").isEmail(),
-        check('password', "pasword is required").not().isEmpty(),
-        validarCampos
-    ]
-    ,createUser
- );
+router.post(
+  "/",
+  [
+    check("name", "name is required").not().isEmpty(),
+    check("lastName", "last name is required").not().isEmpty(),
+    check("email", "email is invalid").isEmail(),
+    check("password", "pasword is required").not().isEmpty(),
+    validarCampos,
+  ],
+  createUser
+);
 
+router.put(
+  "/:id",
+  [
+    valdidarToken,
+    check("name", "name is required").not().isEmpty(),
+    check("lastName", "last name is required").not().isEmpty(),
+    check("email", "email is invalid").isEmail(),
+    check("role", "role is required").not().isEmpty(),
+    validarCampos,
+  ],
+  updateUser
+);
 
-router.put('/:id', [
-        valdidarToken,
-        check('name', "name is required").not().isEmpty(),
-        check('lastName', "last name is required").not().isEmpty(),
-        check('email', "email is invalid").isEmail(),
-        check('role', "role is required").not().isEmpty(),
-        validarCampos
-    ],
-    updateUser
-)
+router.delete(
+  "/:id",
+  [
+    valdidarToken,
+    // check('name', "name is required").not().isEmpty(),
+    // check('lastName', "last name is required").not().isEmpty(),
+    // check('email', "email is invalid").isEmail(),
+    // check('role', "role is required").not().isEmpty(),
+    validarCampos,
+  ],
+  deleteUser
+);
 
-router.delete('/:id', [
-        valdidarToken,
-        check('name', "name is required").not().isEmpty(),
-        check('lastName', "last name is required").not().isEmpty(),
-        check('email', "email is invalid").isEmail(),
-        check('role', "role is required").not().isEmpty(),
-        validarCampos
-    ], 
-    deleteUser 
-)
-
-module.exports = router
+module.exports = router;

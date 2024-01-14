@@ -1,7 +1,7 @@
 const Medical = require("../models/medicals");
 const { response } = require("express");
 
-const getMedical = async (req, res = response) => {
+const getMedicals = async (req, res = response) => {
   const medicals = await Medical.find()
     .populate("user", "name")
     .populate("hospital", "name");
@@ -12,6 +12,34 @@ const getMedical = async (req, res = response) => {
       msg: "Get Medical",
     });
   } catch (error) {}
+};
+
+const getMedical = async (req, res = response) => {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const medicalDB = await Medical.findById({ _id: id })
+      .populate("user", "name")
+      .populate("hospital", "name img");
+
+    if (!medicalDB) {
+      res.status(404).json({
+        ok: false,
+        msg: "El id no existe",
+      });
+    }
+
+    return res.json({
+      ok: true,
+      medical: medicalDB,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error inesperado",
+    });
+  }
 };
 
 const createMedical = async (req, res = response) => {
@@ -96,6 +124,7 @@ const deleteMedical = async (req, res = response) => {
 
 module.exports = {
   getMedical,
+  getMedicals,
   createMedical,
   updateMedical,
   deleteMedical,
