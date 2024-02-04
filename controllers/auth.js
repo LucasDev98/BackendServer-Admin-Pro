@@ -3,6 +3,9 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const { JSONWebTokenGenerator } = require("../helpers/jwt");
 const { googleVerify } = require("../helpers/google-verify");
+const { getMenuFrontend } = require("../helpers/menu-frontend");
+
+
 
 const login = async (req, res = response) => {
   const { email, password } = req.body;
@@ -15,7 +18,7 @@ const login = async (req, res = response) => {
         msg: "Email Invalido",
       });
     }
-
+    
     const isPassword = await bcrypt.compareSync(password, userDB.password);
 
     if (!isPassword) {
@@ -27,10 +30,11 @@ const login = async (req, res = response) => {
 
     //Generate JWT
     const token = await JSONWebTokenGenerator(userDB.id);
-
+   
     res.json({
       ok: true,
       token,
+      menu: getMenuFrontend(userDB.role),
       msg: "Logeando",
     });
   } catch (error) {
@@ -69,11 +73,12 @@ const googleSingIn = async (req, res = response) => {
     await user.save();
 
     const token = await JSONWebTokenGenerator(user.id);
-
+   
     res.json({
       ok: true,
       user,
       token,
+      menu: getMenuFrontend(userDB.role)
     });
   } catch (error) {
     console.log(error);
@@ -90,10 +95,12 @@ const renewToken = async (req, res = response) => {
   try {
     const userDB = await User.findById(uid);
     const token = await JSONWebTokenGenerator(uid);
+    
     return res.json({
       ok: true,
       token: token,
       user: userDB,
+      menu: getMenuFrontend(userDB.role)
     });
   } catch (error) {
     console.log(error);

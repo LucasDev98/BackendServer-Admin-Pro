@@ -3,7 +3,7 @@
 */
 const { Router } = require("express");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { valdidarToken } = require("../middlewares/validarJWT");
+const { valdidarToken, validarAdmin, validarAdminOMismoUsuario } = require("../middlewares/validarJWT");
 const { check } = require("express-validator");
 const {
   getUsers,
@@ -33,6 +33,7 @@ router.put(
   "/:id",
   [
     valdidarToken,
+    validarAdminOMismoUsuario,
     check("name", "name is required").not().isEmpty(),
     check("lastName", "last name is required").not().isEmpty(),
     check("email", "email is invalid").isEmail(),
@@ -46,6 +47,7 @@ router.delete(
   "/:id",
   [
     valdidarToken,
+    validarAdmin,
     // check('name', "name is required").not().isEmpty(),
     // check('lastName', "last name is required").not().isEmpty(),
     // check('email', "email is invalid").isEmail(),
